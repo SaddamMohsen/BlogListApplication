@@ -2,7 +2,7 @@
   "name": "bloglist-backend",
   "version": "1.0.0",
   "description": "Blog List Backend",
-  "main": "index.js",
+  "main": "build/index.html",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "watch": "cross-env NODE_ENV=development nodemon index.js",

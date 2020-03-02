@@ -3,12 +3,32 @@ const usersRouter = require('express').Router()
 const User = require('../models/User')
 const logger = require('../utils/logger')
 
+
 usersRouter.get('/', async(request, response) => {
   try{
     const users = await User
-        .find({}).populate('blog', { title: 1, author: 1, url: 1, likes: 1 })
+        .find({}).populate('blogs', { title: 1,author:1,url:1,likes:1 })
+		console.log(users)
+
+   /*const blogs= await Blogs
+         .find({'user':ObjectId("5dfa0f05bc86341248c1da4b")})*/
         response.json(users.map(b => b.toJSON()))
   }catch(err){next(err)}
+})
+usersRouter.get('/:id', async(req, resp, next) => {
+    
+	try {
+		
+        const user=await User.findOne({'_id':req.params.id})
+		if(user)
+		{
+        resp.json(user.toJSON())
+		}
+	else
+		resp.json('Not found')
+    } catch (exception) {
+        next(exception)
+    }
 })
 usersRouter.post('/', async(request, response, next) => {
     try {

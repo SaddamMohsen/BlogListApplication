@@ -32,13 +32,14 @@ blogsRouter.post('/', async(request, response, next) => {
      } 
      
         const user = await User.findById(decodedToken.id)
-    //console.log('in blog post',user)
+    console.log('in blog post',user)
        const blogg = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes,
-        user: user._id
+        likes: 0,
+        user: user._id,
+		comments:[]
     })
         const blogSaved = await blogg.save()
         user.blogs = user.blogs.concat(blogSaved._id)
@@ -50,27 +51,55 @@ blogsRouter.post('/', async(request, response, next) => {
 })
 blogsRouter.delete('/:id', async(req, resp, next) => {
     try {
-        await Blog.findByIdAndRemove(req.params.id)
+      let blog=await Blog.findByIdAndDelete(req.params.id)
+	    const user = await User.findById(blog.user)
+		//delete id of the blog from users collection
+		User.updateOne(
+        user.id,
+        { "$pull": { "blogs":req.params.id} },
+        { "multi": true }
+    );
         resp.status(204).end()
+	 
     } catch (exception) {
         next(exception)
     }
 })
 blogsRouter.put('/:id', async(req, resp, next) => {
     const body = req.body
-    const blog = {
+    /**/
+	let blog= await Blog.findById(req.params.id)
+	
+	if (!body.likes)
+	{  console.log(body.comments)
+       var mongoose = require('mongoose');
+	   var ObjectId = mongoose.Types.ObjectId;
+       var id1 = new ObjectId;
+        await Blog.findByIdAndUpdate(
+        {"_id":req.params.id},
+        { "$push": { "comments":{"_id":id1,"comments":body.comments}} })
+		  resp.json({message: 'blog updated!'})
+		
+    
+	//console.log(b)
+	
+	}
+	else
+	{
+    console.log('from put')
+    try {
+		const blog = {
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes
-    }
-    console.log('from put')
-    try {
+    } 
         const updateblog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
         console.log('inside ', updateblog)
         resp.json(updateblog.toJSON())
 
     } catch (excep) { next(excep) }
+	}
 })
 
 module.exports = blogsRouter
