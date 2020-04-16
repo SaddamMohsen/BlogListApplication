@@ -32,7 +32,7 @@ blogsRouter.post('/', async(request, response, next) => {
      } 
      
         const user = await User.findById(decodedToken.id)
-    console.log('in blog post',user)
+    //console.log('in blog post',user)
        const blogg = new Blog({
         title: body.title,
         author: body.author,
@@ -71,7 +71,7 @@ blogsRouter.put('/:id', async(req, resp, next) => {
 	let blog= await Blog.findById(req.params.id)
 	
 	if (!body.likes)
-	{  console.log(body.comments)
+	{ // console.log(body.comments)
        var mongoose = require('mongoose');
 	   var ObjectId = mongoose.Types.ObjectId;
        var id1 = new ObjectId;
@@ -86,7 +86,7 @@ blogsRouter.put('/:id', async(req, resp, next) => {
 	}
 	else
 	{
-    console.log('from put')
+    //console.log('from put')
     try {
 		const blog = {
         title: body.title,
@@ -95,7 +95,7 @@ blogsRouter.put('/:id', async(req, resp, next) => {
         likes: body.likes
     } 
         const updateblog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
-        console.log('inside ', updateblog)
+        //console.log('inside ', updateblog)
         resp.json(updateblog.toJSON())
 
     } catch (excep) { next(excep) }
